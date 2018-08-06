@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 
-from django import http
+from django import http, VERSION as DJANGO_VERSION
 from django.conf import settings
 from django.utils.encoding import force_unicode
 from django.core.exceptions import ImproperlyConfigured
@@ -156,7 +156,11 @@ class TemplateNamesModelMixin(object):
                 _("No template name and default templates specified."))
         default_names = list(self.default_template_names)
 
-        template_kwargs = {'module_name': self._meta.module_name}
+        if DJANGO_VERSION >= (1, 7):
+            template_kwargs = {'module_name': self._meta.model_name}
+        else:
+            template_kwargs = {'module_name': self._meta.module_name}
+
         template_kwargs.update(kwargs)
 
         if self.template_name:
